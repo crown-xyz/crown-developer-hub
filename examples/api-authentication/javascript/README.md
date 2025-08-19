@@ -1,6 +1,6 @@
-# JWT Token Generator
+# Crown API Authentication with a Signed JWT example
 
-A simple JavaScript implementation that generates signed JWT tokens based on the Fireblocks SDK pattern.
+A JavaScript implementation that generates signed JWT tokens and makes authenticated API requests to a Crown API endpoint.
 
 ## Setup
 
@@ -25,6 +25,11 @@ openssl rsa -in private.pem -pubout -out public.pem
 cat private.pem
 ```
 
+**Production Security**: For production environments, generate private keys in a secure environment such as:
+- AWS Nitro Enclaves
+- Hardware Security Modules (HSMs)
+- Secure offline environments with proper air-gapping
+
 ### 3. Configure Environment Variables
 
 Edit the `.env` file with your actual values:
@@ -48,10 +53,12 @@ npm start
 node index.js
 ```
 
-The script will output:
-- The signed JWT token
-- The claims used in the token
-- The JSON body that was hashed
+The script will:
+- Generate a signed JWT token
+- Make an authenticated POST request to `https://api.brl.xyz/api/v1/echo`
+- Include the API key in the `X-API-Key` header
+- Include the JWT token in the `Authorization` header as a Bearer token
+- Display the API response
 
 ## Token Structure
 
@@ -61,7 +68,7 @@ The JWT includes these claims:
 - `iat`: Issued at timestamp
 - `exp`: Expiration timestamp (55 seconds from now)
 - `sub`: API key
-- `bodyHash`: SHA-256 hash of the request body
+- `bodyHash`: SHA-256 hash of the request body. If it is a request without a body, use a empty string to generate the hash (For instance a GET request)
 
 ## Security Notes
 
