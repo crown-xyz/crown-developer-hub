@@ -1,0 +1,14 @@
+{
+  "name": "jwt-token-generator",
+  "version": "1.0.0",
+  "description": "Simple JWT token generator",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1"
+  }
+}
