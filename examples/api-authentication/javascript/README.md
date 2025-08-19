@@ -45,7 +45,7 @@ MIIEpAIBAAKCAQEA...your_private_key_content...
 
 ## Usage
 
-Run the script to generate a signed JWT token:
+### Generate Token and Make API Request (Default)
 
 ```bash
 npm start
@@ -59,6 +59,18 @@ The script will:
 - Include the API key in the `X-API-Key` header
 - Include the JWT token in the `Authorization` header as a Bearer token
 - Display the API response
+
+### Generate Token Only
+
+To generate only the JWT token without making the API request:
+
+```bash
+node index.js --token-only
+# or
+node index.js -t
+```
+
+This will output only the generated JWT token, useful for debugging or using the token in other applications.
 
 ## Token Structure
 

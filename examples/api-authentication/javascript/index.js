@@ -4,7 +4,7 @@ const { v4: uuid } = require('uuid');
 const axios = require('axios');
 require('dotenv').config();
 
-function generateJWT(uri, bodyJson) {
+function generateJWT(uri, bodyString) {
   const apiKey = process.env.API_KEY;
   let privateKey = process.env.PRIVATE_KEY;
 
@@ -15,7 +15,7 @@ function generateJWT(uri, bodyJson) {
     exp: Math.floor(Date.now() / 1000) + 55,
     sub: apiKey,
     // Make sure that you use an empty string when the request does not have a body (For example, GET requests)
-    bodyHash: crypto.createHash("sha256").update(JSON.stringify(bodyJson || "")).digest().toString("hex")
+    bodyHash: crypto.createHash("sha256").update(bodyString || "").digest().toString("hex")
   };
 
   const token = jwt.sign(claims, privateKey, { algorithm: "RS256" });
@@ -23,16 +23,19 @@ function generateJWT(uri, bodyJson) {
   return token;
 }
 
+
 async function makeApiRequest() {
   const apiKey = process.env.API_KEY;
   const uri = "/api/v1/echo";
   const bodyJson = {
     "message": "Hello World",
   };
-  const token = generateJWT(uri, bodyJson);
+
+  const bodyString = JSON.stringify(bodyJson)
+  const token = generateJWT(uri, bodyString);
 
   try {
-    const response = await axios.post(`https://api.brl.xyz${uri}`, bodyJson, {
+    const response = await axios.post(`http://localhost:3100${uri}`, bodyString, {
       headers: {
         'X-API-Key': apiKey,
         'Authorization': `Bearer ${token}`,
@@ -51,7 +54,23 @@ async function makeApiRequest() {
 
 async function main() {
   try {
-    await makeApiRequest();
+    const args = process.argv.slice(2);
+    const tokenOnly = args.includes('--token-only') || args.includes('-t');
+
+    if (tokenOnly) {
+      const uri = "/api/v1/echo";
+      const bodyJson = {
+        "message": "Hello World",
+      };
+      const bodyString = JSON.stringify(bodyJson, null, 2)
+ 
+      const token = generateJWT(uri, bodyString);
+      console.log('Generated JWT Token:');
+      console.log('===================');
+      console.log(token);
+    } else {
+      await makeApiRequest();
+    }
   } catch (error) {
     console.error('Error in main:', error.message);
   }
