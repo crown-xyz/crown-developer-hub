@@ -26,20 +26,16 @@ function generateJWT(uri, bodyString) {
 
 async function makeApiRequest() {
   const apiKey = process.env.API_KEY;
-  const uri = "/api/v1/echo";
-  const bodyJson = {
-    "message": "Hello World",
-  };
+  const uri = "/api/v0/wallets";
 
-  const bodyString = JSON.stringify(bodyJson)
-  const token = generateJWT(uri, bodyString);
+  // GET requests have no body, so pass empty string
+  const token = generateJWT(uri, "");
 
   try {
-    const response = await axios.post(`http://localhost:3100${uri}`, bodyString, {
+    const response = await axios.get(`https://app.brl.xyz${uri}`, {
       headers: {
         'X-API-Key': apiKey,
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
       }
     });
 
@@ -58,13 +54,9 @@ async function main() {
     const tokenOnly = args.includes('--token-only') || args.includes('-t');
 
     if (tokenOnly) {
-      const uri = "/api/v1/echo";
-      const bodyJson = {
-        "message": "Hello World",
-      };
-      const bodyString = JSON.stringify(bodyJson, null, 2)
- 
-      const token = generateJWT(uri, bodyString);
+      const uri = "/api/v0/wallets";
+      // GET requests have no body, so pass empty string
+      const token = generateJWT(uri, "");
       console.log('Generated JWT Token:');
       console.log('===================');
       console.log(token);
